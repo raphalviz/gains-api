@@ -1,0 +1,17 @@
+name: Development CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install & Run Unit tests
+      run: |
+        npm Install
+        npm run test
