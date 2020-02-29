@@ -1,27 +1,40 @@
 import { Injectable, HttpException } from '@nestjs/common';
-import { USERS } from '../mocks/users.mock';
 import { User } from './interfaces/user.interface';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
-  users = USERS;
+  constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
 
-  create(user: User) {
-    this.users.push(user);
-  }
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    let newUser = new this.userModel(createUserDto);
 
-  findAll(): User[] {
-    return this.users;
-  }
-
-  findById(userId: any): Promise<any> {
-    let id = userId;
-    return new Promise(resolve => {
-      const user = this.users.find(user => user.id === id);
-      if (!user) {
-        throw new HttpException('User does not exist.', 404);
+    try {
+      let createdUser = await newUser.save();
+      console.log(createdUser);
+      return createdUser;
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new HttpException('User already exists', 200);
       }
-      resolve(user);
-    });
+    }
+  }
+
+  async findAll(): Promise<User[]> {
+    return this.userModel.find().exec();
+  }
+
+  async findById(userId: any): Promise<User> {
+    let id = userId;
+
+    let user = await this.userModel.findById(id).exec();
+
+    if (!user) {
+      throw new HttpException('User does not exist', 404);
+    }
+
+    return user;
   }
 }
