@@ -26,9 +26,9 @@ export class UsersController {
     return this.userService.findAll();
   }
 
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<User> {
-    return this.userService.findById(id);
+  @Get(':username')
+  async findOne(@Param('username') username: string): Promise<User> {
+    return this.userService.findByUsername(username);
   }
 
   @Put(':id')
