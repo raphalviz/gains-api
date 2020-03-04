@@ -2,14 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { MockDocumentQuery } from '../mocks/document-query.mock';
-import { CreateUserDto } from './dto/create-user.dto';
+import { USERS } from '../mocks/users.mock';
 
 class MockUserModel {
   user: object;
-  users: object[] = [
-    { username: 'Alice', password: 'hashedPassword123$' },
-    { username: 'Bob', password: 'bobsHashedPass' },
-  ];
+  users: object[] = USERS;
 
   constructor(user: any) {
     this.user = user;
