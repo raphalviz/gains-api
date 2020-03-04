@@ -2,16 +2,27 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { MockDocumentQuery } from '../mocks/document-query.mock';
+import { CreateUserDto } from './dto/create-user.dto';
 
 class MockUserModel {
-  users = [
+  user: object;
+  users: object[] = [
     { username: 'Alice', password: 'hashedPassword123$' },
     { username: 'Bob', password: 'bobsHashedPass' },
   ];
 
+  constructor(user: any) {
+    this.user = user;
+  }
+
   find() {
     let query = new MockDocumentQuery(this.users);
     return query;
+  }
+
+  save() {
+    this.users.push(this.user);
+    return this.user;
   }
 }
 
@@ -22,14 +33,17 @@ describe('Users Controller', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: getModelToken('User'), useClass: MockUserModel },
+        {
+          provide: getModelToken('User'),
+          useClass: MockUserModel,
+        },
       ],
     }).compile();
 
     userService = module.get<UsersService>(UsersService);
   });
 
-  it('should be defined', () => {
+  it('should be defined', async () => {
     expect(userService).toBeDefined();
   });
 
@@ -40,11 +54,4 @@ describe('Users Controller', () => {
       expect(response).toHaveLength(2);
     });
   });
-
-  describe('create', () => {
-    it('should return a new user', async () => {
-      // TODO
-    })
-  })
-
 });
