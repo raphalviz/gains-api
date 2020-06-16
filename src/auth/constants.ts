@@ -1,3 +1,3 @@
 export const jwtConstants = {
-  secret: "TesT_secr3t",
+  secret: JWT_SECRET,
 };
